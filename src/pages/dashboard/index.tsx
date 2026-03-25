@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { useDashboardStats } from '@/services/dashboard'
 import { useProjects } from '@/services/projects'
 import { useAuthStore } from '@/stores/auth-store'
 import {
@@ -14,6 +15,7 @@ import {
 export function DashboardPage() {
   const user = useAuthStore((s) => s.user)
   const { data: projectsData, isLoading } = useProjects(1)
+  const { data: stats_data } = useDashboardStats()
 
   const greeting = () => {
     const hour = new Date().getHours()
@@ -31,19 +33,19 @@ export function DashboardPage() {
     },
     {
       label: 'Reuniões este mês',
-      value: '—',
+      value: stats_data?.meetings_this_month ?? '—',
       icon: FileText,
       color: 'text-green-500 bg-green-500/10',
     },
     {
       label: 'Horas transcritas',
-      value: '—',
+      value: stats_data ? `${stats_data.transcribed_hours}h` : '—',
       icon: Clock,
       color: 'text-purple-500 bg-purple-500/10',
     },
     {
       label: 'Decisões registradas',
-      value: '—',
+      value: stats_data?.decisions_count ?? '—',
       icon: TrendingUp,
       color: 'text-orange-500 bg-orange-500/10',
     },

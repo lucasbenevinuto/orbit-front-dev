@@ -251,6 +251,14 @@ export interface ProjectDocument {
   updated_at: string
 }
 
+// ============ Dashboard ============
+
+export interface DashboardStats {
+  meetings_this_month: number
+  transcribed_hours: number
+  decisions_count: number
+}
+
 // ============ Analytics ============
 
 export interface MeetingAnalytics {
