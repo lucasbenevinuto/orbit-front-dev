@@ -32,7 +32,11 @@ export function LoginPage() {
       navigate('/')
       toast.success('Login realizado com sucesso!')
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : 'Erro ao fazer login'
+      const axiosError = error as { response?: { data?: { message?: string; detail?: string } } }
+      const message =
+        axiosError.response?.data?.message ||
+        axiosError.response?.data?.detail ||
+        (error instanceof Error ? error.message : 'Erro ao fazer login')
       toast.error(message)
     } finally {
       setIsLoading(false)

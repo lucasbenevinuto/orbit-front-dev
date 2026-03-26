@@ -17,9 +17,9 @@ import {
 } from 'lucide-react'
 
 const statusConfig: Record<MeetingStatus, { label: string; icon: typeof CheckCircle2; className: string }> = {
-  draft: { label: 'Rascunho', icon: FileText, className: 'text-muted-foreground bg-muted' },
-  processing: { label: 'Processando', icon: Clock, className: 'text-yellow-600 bg-yellow-500/10' },
-  completed: { label: 'Concluída', icon: CheckCircle2, className: 'text-green-600 bg-green-500/10' },
+  draft: { label: 'Rascunho', icon: FileText, className: 'text-muted-foreground bg-secondary' },
+  processing: { label: 'Processando', icon: Clock, className: 'text-amber-600 bg-amber-500/10' },
+  completed: { label: 'Concluída', icon: CheckCircle2, className: 'text-emerald-600 bg-emerald-500/10' },
   failed: { label: 'Falhou', icon: AlertCircle, className: 'text-destructive bg-destructive/10' },
 }
 
@@ -49,7 +49,7 @@ export function ProjectDetailPage() {
   if (projectLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-foreground" />
       </div>
     )
   }
@@ -58,7 +58,7 @@ export function ProjectDetailPage() {
     return (
       <div className="text-center">
         <p className="text-muted-foreground">Projeto não encontrado</p>
-        <Link to="/projects" className="mt-4 text-primary hover:underline">
+        <Link to="/projects" className="mt-4 text-foreground font-medium hover:underline">
           Voltar para projetos
         </Link>
       </div>
@@ -71,32 +71,34 @@ export function ProjectDetailPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start gap-4">
-        <Link
-          to="/projects"
-          className="mt-1 rounded-md p-1 text-muted-foreground hover:bg-accent"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Link>
-        <div className="flex-1">
-          <div className="flex items-center gap-3">
-            <div
-              className="flex h-10 w-10 items-center justify-center rounded-md text-lg"
-              style={{ backgroundColor: (project.color || '#3b82f6') + '20' }}
-            >
-              {project.icon || '📁'}
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">{project.name}</h1>
-              {project.description && (
-                <p className="text-muted-foreground">{project.description}</p>
-              )}
+      <div className="space-y-4">
+        <div className="flex items-start gap-3">
+          <Link
+            to="/projects"
+            className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-full bg-card shadow-card text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Link>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-3">
+              <div
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-lg"
+                style={{ backgroundColor: (project.color || '#3b82f6') + '15' }}
+              >
+                {project.icon || '📁'}
+              </div>
+              <div className="min-w-0">
+                <h1 className="truncate text-xl font-bold tracking-tight text-foreground sm:text-2xl">{project.name}</h1>
+                {project.description && (
+                  <p className="truncate text-sm text-muted-foreground">{project.description}</p>
+                )}
+              </div>
             </div>
           </div>
         </div>
         <button
           onClick={() => setShowCreate(true)}
-          className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+          className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background hover:bg-foreground/90 transition-colors sm:w-auto"
         >
           <Plus className="h-4 w-4" />
           Nova Reunião
@@ -105,16 +107,16 @@ export function ProjectDetailPage() {
 
       {/* Create meeting modal */}
       {showCreate && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="w-full max-w-md rounded-lg border border-border bg-background p-6 shadow-lg">
-            <h2 className="text-lg font-semibold">Nova Reunião</h2>
-            <form onSubmit={handleSubmit(onCreateMeeting)} className="mt-4 space-y-4">
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-sm sm:items-center">
+          <div className="w-full max-h-[90vh] overflow-y-auto rounded-t-3xl bg-card p-6 shadow-lg sm:max-w-md sm:rounded-2xl">
+            <h2 className="text-lg font-semibold text-card-foreground">Nova Reunião</h2>
+            <form onSubmit={handleSubmit(onCreateMeeting)} className="mt-5 space-y-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Título</label>
                 <input
                   {...register('title', { required: true })}
                   placeholder="Título da reunião"
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="flex h-11 w-full rounded-xl border-0 bg-secondary px-4 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 />
               </div>
               <div className="space-y-2">
@@ -123,21 +125,21 @@ export function ProjectDetailPage() {
                   {...register('user_notes')}
                   placeholder="Notas opcionais"
                   rows={3}
-                  className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="flex w-full rounded-xl border-0 bg-secondary px-4 py-3 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 />
               </div>
-              <div className="flex justify-end gap-2">
+              <div className="flex gap-2 pt-2">
                 <button
                   type="button"
                   onClick={() => { setShowCreate(false); reset() }}
-                  className="rounded-md border border-input px-4 py-2 text-sm font-medium hover:bg-accent"
+                  className="flex-1 rounded-full border border-border px-4 py-2.5 text-sm font-medium hover:bg-accent transition-colors"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={createMeeting.isPending}
-                  className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+                  className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-foreground px-4 py-2.5 text-sm font-medium text-background hover:bg-foreground/90 disabled:opacity-50 transition-colors"
                 >
                   {createMeeting.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
                   Criar
@@ -149,70 +151,85 @@ export function ProjectDetailPage() {
       )}
 
       {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+      <div className="relative max-w-xl">
+        <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <input
           type="text"
           placeholder="Buscar reuniões..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="flex h-10 w-full rounded-md border border-input bg-background pl-9 pr-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="flex h-11 w-full rounded-full border-0 bg-card pl-10 pr-4 py-2 text-sm shadow-card placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
       </div>
 
       {/* Meetings list */}
       {meetingsLoading ? (
-        <div className="space-y-3">
+        <div className="space-y-3 max-w-xl">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-20 animate-pulse rounded-lg border border-border bg-muted" />
+            <div key={i} className="h-[72px] animate-pulse rounded-2xl bg-card shadow-card" />
           ))}
         </div>
       ) : filteredMeetings?.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-border p-12 text-center">
-          <FileText className="mx-auto h-10 w-10 text-muted-foreground/50" />
-          <p className="mt-4 text-muted-foreground">Nenhuma reunião encontrada</p>
+        <div className="max-w-xl rounded-2xl bg-card p-12 text-center shadow-card">
+          <FileText className="mx-auto h-10 w-10 text-muted-foreground/40" />
+          <p className="mt-4 text-sm text-muted-foreground">Nenhuma reunião encontrada</p>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-2 max-w-xl">
           {filteredMeetings?.map((meeting) => {
             const status = statusConfig[meeting.status]
-            const StatusIcon = status.icon
+            const date = new Date(meeting.created_at)
+            const day = date.getDate().toString().padStart(2, '0')
+            const month = date.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '')
             return (
               <Link
                 key={meeting.id}
                 to={`/projects/${projectId}/meetings/${meeting.id}`}
-                className="flex items-center justify-between rounded-lg border border-border bg-card p-4 transition-colors hover:bg-accent/50"
+                className="flex items-center gap-3.5 rounded-2xl bg-card p-3 shadow-card transition-shadow hover:shadow-card-hover"
               >
+                {/* Date block */}
+                <div className="flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-xl bg-secondary">
+                  <span className="text-base font-bold leading-none text-foreground">{day}</span>
+                  <span className="mt-0.5 text-[10px] font-medium uppercase leading-none text-muted-foreground">{month}</span>
+                </div>
+
+                {/* Content */}
                 <div className="min-w-0 flex-1">
-                  <h3 className="font-medium text-card-foreground">
-                    {meeting.title}
-                  </h3>
-                  <div className="mt-1 flex items-center gap-3 text-sm text-muted-foreground">
-                    <span>
-                      {new Date(meeting.created_at).toLocaleDateString('pt-BR', {
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric',
-                      })}
-                    </span>
-                    {meeting.tags && meeting.tags.length > 0 && (
-                      <div className="flex gap-1">
-                        {meeting.tags.slice(0, 3).map((tag) => (
-                          <span
-                            key={tag}
-                            className="rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
+                  <div className="flex items-center gap-2">
+                    <span className={`h-2 w-2 shrink-0 rounded-full ${
+                      meeting.status === 'completed' ? 'bg-emerald-500' :
+                      meeting.status === 'processing' ? 'bg-amber-500 animate-pulse' :
+                      meeting.status === 'failed' ? 'bg-red-500' :
+                      'bg-muted-foreground/30'
+                    }`} />
+                    <h3 className="truncate text-sm font-semibold text-card-foreground">
+                      {meeting.title}
+                    </h3>
                   </div>
+                  {meeting.summary ? (
+                    <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                      {meeting.summary}
+                    </p>
+                  ) : (
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      {status.label}
+                    </p>
+                  )}
                 </div>
-                <div className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${status.className}`}>
-                  <StatusIcon className="h-3.5 w-3.5" />
-                  {status.label}
-                </div>
+
+                {/* Tags */}
+                {meeting.tags && meeting.tags.length > 0 && (
+                  <div className="hidden shrink-0 gap-1 sm:flex">
+                    {meeting.tags.slice(0, 2).map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-medium text-muted-foreground"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </Link>
             )
           })}
@@ -225,17 +242,17 @@ export function ProjectDetailPage() {
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="rounded-md border border-input px-3 py-1.5 text-sm disabled:opacity-50"
+            className="rounded-full bg-card px-4 py-2 text-sm font-medium shadow-card disabled:opacity-40"
           >
             Anterior
           </button>
-          <span className="text-sm text-muted-foreground">
-            Página {page} de {meetingsData.pagination.total_pages}
+          <span className="px-3 text-sm text-muted-foreground">
+            {page} / {meetingsData.pagination.total_pages}
           </span>
           <button
             onClick={() => setPage((p) => Math.min(meetingsData.pagination.total_pages, p + 1))}
             disabled={page === meetingsData.pagination.total_pages}
-            className="rounded-md border border-input px-3 py-1.5 text-sm disabled:opacity-50"
+            className="rounded-full bg-card px-4 py-2 text-sm font-medium shadow-card disabled:opacity-40"
           >
             Próxima
           </button>

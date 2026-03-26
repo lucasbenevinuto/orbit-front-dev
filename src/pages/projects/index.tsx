@@ -10,7 +10,6 @@ import {
   Search,
   Trash2,
   Loader2,
-  MoreHorizontal,
 } from 'lucide-react'
 
 export function ProjectsPage() {
@@ -50,16 +49,16 @@ export function ProjectsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Projetos</h1>
-          <p className="mt-1 text-muted-foreground">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Projetos</h1>
+          <p className="mt-0.5 text-sm text-muted-foreground">
             Organize suas reuniões por projetos
           </p>
         </div>
         <button
           onClick={() => setShowCreate(true)}
-          className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+          className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background hover:bg-foreground/90 transition-colors"
         >
           <Plus className="h-4 w-4" />
           Novo Projeto
@@ -68,21 +67,21 @@ export function ProjectsPage() {
 
       {/* Create project modal */}
       {showCreate && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="w-full max-w-md rounded-lg border border-border bg-background p-6 shadow-lg">
-            <h2 className="text-lg font-semibold text-foreground">
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-sm sm:items-center">
+          <div className="w-full max-h-[90vh] overflow-y-auto rounded-t-3xl bg-card p-6 shadow-lg sm:max-w-md sm:rounded-2xl">
+            <h2 className="text-lg font-semibold text-card-foreground">
               Novo Projeto
             </h2>
             <form
               onSubmit={handleSubmit(onCreateSubmit)}
-              className="mt-4 space-y-4"
+              className="mt-5 space-y-4"
             >
               <div className="space-y-2">
                 <label className="text-sm font-medium">Nome</label>
                 <input
                   {...register('name', { required: true })}
                   placeholder="Nome do projeto"
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="flex h-11 w-full rounded-xl border-0 bg-secondary px-4 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 />
               </div>
               <div className="space-y-2">
@@ -91,7 +90,7 @@ export function ProjectsPage() {
                   {...register('description')}
                   placeholder="Descrição opcional"
                   rows={3}
-                  className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="flex w-full rounded-xl border-0 bg-secondary px-4 py-3 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 />
               </div>
               <div className="space-y-2">
@@ -100,24 +99,21 @@ export function ProjectsPage() {
                   {...register('color')}
                   type="color"
                   defaultValue="#3b82f6"
-                  className="h-10 w-20 cursor-pointer rounded-md border border-input"
+                  className="h-10 w-20 cursor-pointer rounded-xl border-0"
                 />
               </div>
-              <div className="flex justify-end gap-2">
+              <div className="flex gap-2 pt-2">
                 <button
                   type="button"
-                  onClick={() => {
-                    setShowCreate(false)
-                    reset()
-                  }}
-                  className="rounded-md border border-input px-4 py-2 text-sm font-medium hover:bg-accent"
+                  onClick={() => { setShowCreate(false); reset() }}
+                  className="flex-1 rounded-full border border-border px-4 py-2.5 text-sm font-medium hover:bg-accent transition-colors"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={createProject.isPending}
-                  className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+                  className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-foreground px-4 py-2.5 text-sm font-medium text-background hover:bg-foreground/90 disabled:opacity-50 transition-colors"
                 >
                   {createProject.isPending && (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -132,46 +128,46 @@ export function ProjectsPage() {
 
       {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <input
           type="text"
           placeholder="Buscar projetos..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="flex h-10 w-full rounded-md border border-input bg-background pl-9 pr-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="flex h-11 w-full rounded-full border-0 bg-card pl-10 pr-4 py-2 text-sm shadow-card placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
       </div>
 
       {/* Projects grid */}
       {isLoading ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <div
               key={i}
-              className="h-40 animate-pulse rounded-lg border border-border bg-muted"
+              className="h-32 animate-pulse rounded-2xl bg-card shadow-card"
             />
           ))}
         </div>
       ) : filteredProjects?.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-border p-12 text-center">
-          <FolderKanban className="mx-auto h-10 w-10 text-muted-foreground/50" />
+        <div className="rounded-2xl bg-card p-12 text-center shadow-card">
+          <FolderKanban className="mx-auto h-10 w-10 text-muted-foreground/40" />
           <p className="mt-4 text-muted-foreground">
             {search ? 'Nenhum projeto encontrado' : 'Nenhum projeto criado ainda'}
           </p>
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {filteredProjects?.map((project) => (
             <div
               key={project.id}
-              className="group relative rounded-lg border border-border bg-card p-5 transition-colors hover:bg-accent/50"
+              className="group relative rounded-2xl bg-card p-5 shadow-card transition-shadow hover:shadow-card-hover"
             >
               <Link to={`/projects/${project.id}`} className="block">
                 <div className="flex items-start gap-3">
                   <div
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md text-lg"
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-lg"
                     style={{
-                      backgroundColor: (project.color || '#3b82f6') + '20',
+                      backgroundColor: (project.color || '#3b82f6') + '15',
                     }}
                   >
                     {project.icon || '📁'}
@@ -181,18 +177,16 @@ export function ProjectsPage() {
                       {project.name}
                     </h3>
                     {project.description && (
-                      <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
+                      <p className="mt-0.5 line-clamp-2 text-sm text-muted-foreground">
                         {project.description}
                       </p>
                     )}
                   </div>
                 </div>
-                <div className="mt-4 flex items-center gap-4 text-xs text-muted-foreground">
-                  <span>
-                    Criado em{' '}
-                    {new Date(project.created_at).toLocaleDateString('pt-BR')}
-                  </span>
-                </div>
+                <p className="mt-3 text-xs text-muted-foreground">
+                  Criado em{' '}
+                  {new Date(project.created_at).toLocaleDateString('pt-BR')}
+                </p>
               </Link>
 
               <button
@@ -200,7 +194,7 @@ export function ProjectsPage() {
                   e.stopPropagation()
                   handleDelete(project.id, project.name)
                 }}
-                className="absolute right-3 top-3 rounded-md p-1 text-muted-foreground opacity-0 transition-opacity hover:bg-destructive/10 hover:text-destructive group-hover:opacity-100"
+                className="absolute right-3 top-3 rounded-full p-2 text-muted-foreground opacity-100 transition-all hover:bg-destructive/10 hover:text-destructive md:opacity-0 md:group-hover:opacity-100"
               >
                 <Trash2 className="h-4 w-4" />
               </button>
@@ -215,17 +209,17 @@ export function ProjectsPage() {
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="rounded-md border border-input px-3 py-1.5 text-sm disabled:opacity-50"
+            className="rounded-full bg-card px-4 py-2 text-sm font-medium shadow-card disabled:opacity-40"
           >
             Anterior
           </button>
-          <span className="text-sm text-muted-foreground">
-            Página {page} de {data.pagination.total_pages}
+          <span className="px-3 text-sm text-muted-foreground">
+            {page} / {data.pagination.total_pages}
           </span>
           <button
             onClick={() => setPage((p) => Math.min(data.pagination.total_pages, p + 1))}
             disabled={page === data.pagination.total_pages}
-            className="rounded-md border border-input px-3 py-1.5 text-sm disabled:opacity-50"
+            className="rounded-full bg-card px-4 py-2 text-sm font-medium shadow-card disabled:opacity-40"
           >
             Próxima
           </button>

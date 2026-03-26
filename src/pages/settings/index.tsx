@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
+import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/stores/auth-store'
 import { useSessions, useRevokeSession, useRevokeAllSessions } from '@/services/sessions'
 import { api } from '@/lib/api'
@@ -115,63 +116,65 @@ export function SettingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Configurações</h1>
-        <p className="mt-1 text-muted-foreground">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">Configurações</h1>
+        <p className="mt-0.5 text-sm text-muted-foreground">
           Gerencie seu perfil e preferências
         </p>
       </div>
 
-      <div className="flex gap-8">
-        {/* Sidebar tabs */}
-        <nav className="w-48 space-y-1">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-                activeTab === tab.id
-                  ? 'bg-accent text-accent-foreground'
-                  : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'
-              }`}
-            >
-              <tab.icon className="h-4 w-4" />
-              {tab.label}
-            </button>
-          ))}
-        </nav>
+      {/* Pill tabs on mobile, sidebar on desktop */}
+      <div className="flex flex-col md:flex-row md:gap-8">
+        <div className="-mx-5 px-5 md:mx-0 md:w-48 md:px-0">
+          <nav className="inline-flex gap-1 overflow-x-auto rounded-full bg-card p-1 shadow-card md:flex md:w-full md:flex-col md:rounded-2xl md:p-2">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={cn(
+                  'flex min-h-[36px] shrink-0 items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium transition-all md:w-full md:rounded-xl md:px-3 md:py-2.5',
+                  activeTab === tab.id
+                    ? 'bg-foreground text-background shadow-sm md:bg-accent md:text-accent-foreground md:shadow-none'
+                    : 'text-muted-foreground hover:text-foreground'
+                )}
+              >
+                <tab.icon className="h-4 w-4" />
+                {tab.label}
+              </button>
+            ))}
+          </nav>
+        </div>
 
-        {/* Content */}
-        <div className="flex-1">
+        <div className="mt-5 flex-1 md:mt-0">
           {activeTab === 'profile' && (
             <div className="max-w-lg space-y-6">
-              <div className="rounded-lg border border-border bg-card p-6">
-                <h3 className="text-lg font-semibold text-card-foreground">
+              <div className="rounded-2xl bg-card p-5 shadow-card sm:p-6">
+                <h3 className="text-base font-semibold text-card-foreground">
                   Informações do Perfil
                 </h3>
                 <form
                   onSubmit={profileForm.handleSubmit(onProfileSubmit)}
-                  className="mt-4 space-y-4"
+                  className="mt-5 space-y-4"
                 >
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Email</label>
                     <input
                       value={user?.email || ''}
                       disabled
-                      className="flex h-10 w-full rounded-md border border-input bg-muted px-3 py-2 text-sm text-muted-foreground"
+                      className="flex h-11 w-full rounded-xl border-0 bg-secondary px-4 py-2 text-sm text-muted-foreground"
                     />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Nome</label>
                     <input
                       {...profileForm.register('name')}
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      className="flex h-11 w-full rounded-xl border-0 bg-secondary px-4 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Fuso Horário</label>
                     <select
                       {...profileForm.register('timezone')}
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      className="flex h-11 w-full rounded-xl border-0 bg-secondary px-4 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     >
                       <option value="America/Sao_Paulo">São Paulo (UTC-3)</option>
                       <option value="America/Manaus">Manaus (UTC-4)</option>
@@ -186,7 +189,7 @@ export function SettingsPage() {
                   <button
                     type="submit"
                     disabled={profileSaving}
-                    className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+                    className="inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background hover:bg-foreground/90 disabled:opacity-50 transition-colors"
                   >
                     {profileSaving && <Loader2 className="h-4 w-4 animate-spin" />}
                     Salvar
@@ -198,25 +201,25 @@ export function SettingsPage() {
 
           {activeTab === 'security' && (
             <div className="max-w-lg space-y-6">
-              <div className="rounded-lg border border-border bg-card p-6">
-                <h3 className="text-lg font-semibold text-card-foreground">
+              <div className="rounded-2xl bg-card p-5 shadow-card sm:p-6">
+                <h3 className="text-base font-semibold text-card-foreground">
                   Alterar Senha
                 </h3>
                 {user?.auth_provider === 'google' ? (
-                  <p className="mt-2 text-sm text-muted-foreground">
+                  <p className="mt-3 text-sm text-muted-foreground">
                     Sua conta está vinculada ao Google. A senha é gerenciada pela sua conta Google.
                   </p>
                 ) : (
                   <form
                     onSubmit={passwordForm.handleSubmit(onPasswordSubmit)}
-                    className="mt-4 space-y-4"
+                    className="mt-5 space-y-4"
                   >
                     <div className="space-y-2">
                       <label className="text-sm font-medium">Senha Atual</label>
                       <input
                         type="password"
                         {...passwordForm.register('current_password', { required: true })}
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        className="flex h-11 w-full rounded-xl border-0 bg-secondary px-4 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       />
                     </div>
                     <div className="space-y-2">
@@ -224,7 +227,7 @@ export function SettingsPage() {
                       <input
                         type="password"
                         {...passwordForm.register('new_password', { required: true, minLength: 8 })}
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        className="flex h-11 w-full rounded-xl border-0 bg-secondary px-4 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       />
                     </div>
                     <div className="space-y-2">
@@ -232,13 +235,13 @@ export function SettingsPage() {
                       <input
                         type="password"
                         {...passwordForm.register('confirm_password', { required: true })}
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        className="flex h-11 w-full rounded-xl border-0 bg-secondary px-4 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       />
                     </div>
                     <button
                       type="submit"
                       disabled={passwordSaving}
-                      className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+                      className="inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background hover:bg-foreground/90 disabled:opacity-50 transition-colors"
                     >
                       {passwordSaving && <Loader2 className="h-4 w-4 animate-spin" />}
                       Alterar Senha
@@ -252,12 +255,12 @@ export function SettingsPage() {
           {activeTab === 'sessions' && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-foreground">
+                <h3 className="text-base font-semibold text-foreground">
                   Sessões Ativas
                 </h3>
                 <button
                   onClick={handleRevokeAll}
-                  className="inline-flex items-center gap-2 rounded-md border border-destructive/30 px-3 py-1.5 text-sm font-medium text-destructive hover:bg-destructive/10"
+                  className="inline-flex items-center gap-2 rounded-full border border-destructive/20 px-4 py-2 text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors"
                 >
                   <LogOut className="h-4 w-4" />
                   Encerrar todas
@@ -267,7 +270,7 @@ export function SettingsPage() {
               {sessionsLoading ? (
                 <div className="space-y-3">
                   {[1, 2].map((i) => (
-                    <div key={i} className="h-20 animate-pulse rounded-lg border border-border bg-muted" />
+                    <div key={i} className="h-20 animate-pulse rounded-2xl bg-card shadow-card" />
                   ))}
                 </div>
               ) : (
@@ -277,22 +280,23 @@ export function SettingsPage() {
                     return (
                       <div
                         key={session.id}
-                        className="flex items-center justify-between rounded-lg border border-border bg-card p-4"
+                        className="flex items-center justify-between rounded-2xl bg-card p-4 shadow-card"
                       >
                         <div className="flex items-center gap-3">
-                          <DeviceIcon className="h-5 w-5 text-muted-foreground" />
+                          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-secondary">
+                            <DeviceIcon className="h-4 w-4 text-muted-foreground" />
+                          </div>
                           <div>
                             <p className="text-sm font-medium text-card-foreground">
                               {session.device_name || 'Dispositivo desconhecido'}
                               {session.is_current && (
-                                <span className="ml-2 rounded-full bg-green-500/10 px-2 py-0.5 text-xs text-green-600">
+                                <span className="ml-2 rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-600">
                                   Atual
                                 </span>
                               )}
                             </p>
                             <p className="text-xs text-muted-foreground">
-                              {session.ip_address && `IP: ${session.ip_address} · `}
-                              Último acesso:{' '}
+                              {session.ip_address && `${session.ip_address} · `}
                               {new Date(session.last_active_at).toLocaleDateString('pt-BR', {
                                 day: '2-digit',
                                 month: 'short',
@@ -305,7 +309,7 @@ export function SettingsPage() {
                         {!session.is_current && (
                           <button
                             onClick={() => handleRevokeSession(session.id)}
-                            className="rounded-md p-1.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                            className="rounded-full p-2 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
                           >
                             <Trash2 className="h-4 w-4" />
                           </button>

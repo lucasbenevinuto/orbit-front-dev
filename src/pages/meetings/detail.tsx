@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { toast } from 'sonner'
+import { cn } from '@/lib/utils'
 import { useMeeting } from '@/services/meetings'
 import { useDecisions, useCreateDecision, useDeleteDecision } from '@/services/decisions'
 import { useTranscriptionByAudio, useEditTranscription } from '@/services/transcriptions'
@@ -55,7 +56,7 @@ function SpeakerBadge({
             if (e.key === 'Enter') handleSave()
             if (e.key === 'Escape') { setValue(displayName); setEditing(false) }
           }}
-          className="h-7 w-32 rounded border border-input bg-background px-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          className="h-7 w-32 rounded-lg border-0 bg-secondary px-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         />
       </div>
     )
@@ -64,11 +65,11 @@ function SpeakerBadge({
   return (
     <button
       onClick={() => { setValue(displayName); setEditing(true) }}
-      className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1 text-sm transition-colors hover:border-primary hover:bg-primary/5"
+      className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1.5 text-sm transition-colors hover:bg-accent"
     >
-      <span className="font-medium text-primary">{label}</span>
+      <span className="font-medium text-foreground">{label}</span>
       <span className="text-muted-foreground">→</span>
-      <span className="text-foreground">{displayName === label ? 'Renomear...' : displayName}</span>
+      <span className="text-muted-foreground">{displayName === label ? 'Renomear...' : displayName}</span>
     </button>
   )
 }
@@ -88,7 +89,6 @@ export function MeetingDetailPage() {
   const createDecision = useCreateDecision(meetingId!)
   const deleteDecision = useDeleteDecision(meetingId!)
 
-  // Speaker mapping: original label -> display name
   const speakerMap = transcription?.speaker_map || {}
   const uniqueSpeakers = useMemo(() => {
     if (!transcription?.speaker_segments) return []
@@ -145,7 +145,7 @@ export function MeetingDetailPage() {
   if (isLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-foreground" />
       </div>
     )
   }
@@ -159,10 +159,10 @@ export function MeetingDetailPage() {
   }
 
   const statusInfo = {
-    draft: { label: 'Rascunho', icon: FileText, className: 'text-muted-foreground' },
-    processing: { label: 'Processando', icon: Clock, className: 'text-yellow-600' },
-    completed: { label: 'Concluída', icon: CheckCircle2, className: 'text-green-600' },
-    failed: { label: 'Falhou', icon: AlertCircle, className: 'text-destructive' },
+    draft: { label: 'Rascunho', icon: FileText, className: 'text-muted-foreground bg-secondary' },
+    processing: { label: 'Processando', icon: Clock, className: 'text-amber-600 bg-amber-500/10' },
+    completed: { label: 'Concluída', icon: CheckCircle2, className: 'text-emerald-600 bg-emerald-500/10' },
+    failed: { label: 'Falhou', icon: AlertCircle, className: 'text-destructive bg-destructive/10' },
   }[meeting.status]
   const StatusIcon = statusInfo.icon
 
@@ -176,21 +176,21 @@ export function MeetingDetailPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-start gap-4">
+      <div className="flex items-start gap-3">
         <Link
           to={`/projects/${projectId}`}
-          className="mt-1 rounded-md p-1 text-muted-foreground hover:bg-accent"
+          className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-full bg-card shadow-card text-muted-foreground hover:text-foreground transition-colors"
         >
-          <ArrowLeft className="h-5 w-5" />
+          <ArrowLeft className="h-4 w-4" />
         </Link>
-        <div className="flex-1">
-          <h1 className="text-2xl font-bold text-foreground">{meeting.title}</h1>
-          <div className="mt-2 flex items-center gap-3 text-sm text-muted-foreground">
-            <div className={`inline-flex items-center gap-1 ${statusInfo.className}`}>
-              <StatusIcon className="h-4 w-4" />
+        <div className="min-w-0 flex-1">
+          <h1 className="truncate text-xl font-bold tracking-tight text-foreground sm:text-2xl">{meeting.title}</h1>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <div className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${statusInfo.className}`}>
+              <StatusIcon className="h-3.5 w-3.5" />
               {statusInfo.label}
             </div>
-            <span>
+            <span className="text-xs text-muted-foreground">
               {new Date(meeting.created_at).toLocaleDateString('pt-BR', {
                 day: '2-digit',
                 month: 'long',
@@ -200,11 +200,11 @@ export function MeetingDetailPage() {
               })}
             </span>
             {meeting.tags && meeting.tags.length > 0 && (
-              <div className="flex gap-1">
+              <div className="flex flex-wrap gap-1">
                 {meeting.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary"
+                    className="rounded-full bg-secondary px-2 py-0.5 text-xs text-foreground"
                   >
                     {tag}
                   </span>
@@ -215,37 +215,38 @@ export function MeetingDetailPage() {
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="border-b border-border">
-        <nav className="flex gap-6">
+      {/* Pill tabs */}
+      <div className="-mx-5 px-5 md:mx-0 md:px-0">
+        <div className="inline-flex gap-1 overflow-x-auto rounded-full bg-card p-1 shadow-card">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`inline-flex items-center gap-2 border-b-2 px-1 pb-3 pt-1 text-sm font-medium transition-colors ${
+              className={cn(
+                'inline-flex min-h-[36px] shrink-0 items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-all',
                 activeTab === tab.id
-                  ? 'border-primary text-primary'
-                  : 'border-transparent text-muted-foreground hover:text-foreground'
-              }`}
+                  ? 'bg-foreground text-background shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              )}
             >
-              <tab.icon className="h-4 w-4" />
+              <tab.icon className="h-3.5 w-3.5" />
               {tab.label}
             </button>
           ))}
-        </nav>
+        </div>
       </div>
 
       {/* Tab content */}
       <div className="min-h-[400px]">
         {activeTab === 'summary' && (
-          <div className="space-y-6">
+          <div className="space-y-4">
             {meeting.summary ? (
-              <div className="rounded-lg border border-border bg-card p-6">
+              <div className="rounded-2xl bg-card p-5 shadow-card sm:p-6">
                 <div className="mb-3 flex items-center justify-between">
                   <h3 className="font-semibold text-card-foreground">Resumo</h3>
                   <button
                     onClick={() => copyToClipboard(meeting.summary!)}
-                    className="rounded-md p-1 text-muted-foreground hover:bg-accent"
+                    className="rounded-full p-2 text-muted-foreground hover:bg-accent transition-colors"
                   >
                     <Copy className="h-4 w-4" />
                   </button>
@@ -255,9 +256,9 @@ export function MeetingDetailPage() {
                 </p>
               </div>
             ) : (
-              <div className="rounded-lg border border-dashed border-border p-12 text-center">
-                <FileText className="mx-auto h-10 w-10 text-muted-foreground/50" />
-                <p className="mt-4 text-muted-foreground">
+              <div className="rounded-2xl bg-card p-12 text-center shadow-card">
+                <FileText className="mx-auto h-10 w-10 text-muted-foreground/40" />
+                <p className="mt-4 text-sm text-muted-foreground">
                   {meeting.status === 'processing'
                     ? 'O resumo está sendo gerado...'
                     : 'Nenhum resumo disponível'}
@@ -266,7 +267,7 @@ export function MeetingDetailPage() {
             )}
 
             {meeting.key_topics && meeting.key_topics.length > 0 && (
-              <div className="rounded-lg border border-border bg-card p-6">
+              <div className="rounded-2xl bg-card p-5 shadow-card sm:p-6">
                 <h3 className="mb-3 font-semibold text-card-foreground">
                   Tópicos Principais
                 </h3>
@@ -276,7 +277,7 @@ export function MeetingDetailPage() {
                       key={i}
                       className="flex items-start gap-2 text-sm text-muted-foreground"
                     >
-                      <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-foreground" />
                       {topic}
                     </li>
                   ))}
@@ -285,7 +286,7 @@ export function MeetingDetailPage() {
             )}
 
             {meeting.user_notes && (
-              <div className="rounded-lg border border-border bg-card p-6">
+              <div className="rounded-2xl bg-card p-5 shadow-card sm:p-6">
                 <h3 className="mb-3 font-semibold text-card-foreground">
                   Notas do Usuário
                 </h3>
@@ -300,19 +301,19 @@ export function MeetingDetailPage() {
         {activeTab === 'transcription' && (
           <div className="space-y-4">
             {transcription ? (
-              <div className="rounded-lg border border-border bg-card p-6">
+              <div className="rounded-2xl bg-card p-5 shadow-card sm:p-6">
                 <div className="mb-4 flex items-center justify-between">
                   <div>
                     <h3 className="font-semibold text-card-foreground">Transcrição</h3>
                     <p className="text-xs text-muted-foreground">
                       {transcription.word_count} palavras
-                      {transcription.detected_language && ` · Idioma: ${transcription.detected_language}`}
-                      {transcription.processing_time_seconds && ` · Processado em ${formatDuration(transcription.processing_time_seconds)}`}
+                      {transcription.detected_language && ` · ${transcription.detected_language}`}
+                      {transcription.processing_time_seconds && ` · ${formatDuration(transcription.processing_time_seconds)}`}
                     </p>
                   </div>
                   <button
                     onClick={() => copyToClipboard(transcription.content)}
-                    className="rounded-md p-1 text-muted-foreground hover:bg-accent"
+                    className="rounded-full p-2 text-muted-foreground hover:bg-accent transition-colors"
                   >
                     <Copy className="h-4 w-4" />
                   </button>
@@ -320,9 +321,8 @@ export function MeetingDetailPage() {
 
                 {transcription.speaker_segments && transcription.speaker_segments.length > 0 ? (
                   <>
-                    {/* Speaker rename panel */}
                     {uniqueSpeakers.length > 0 && (
-                      <div className="mb-6 rounded-md border border-border bg-muted/50 p-4">
+                      <div className="mb-6 rounded-xl bg-secondary/60 p-4">
                         <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
                           Participantes — clique para renomear
                         </p>
@@ -342,7 +342,7 @@ export function MeetingDetailPage() {
                     <div className="space-y-3">
                       {transcription.speaker_segments.map((seg, i) => (
                         <div key={i} className="flex gap-3">
-                          <span className="mt-0.5 shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                          <span className="mt-0.5 shrink-0 rounded-full bg-foreground/10 px-2.5 py-0.5 text-xs font-medium text-foreground">
                             {getSpeakerName(seg.speaker)}
                           </span>
                           <p className="text-sm leading-relaxed text-muted-foreground">
@@ -359,15 +359,15 @@ export function MeetingDetailPage() {
                 )}
               </div>
             ) : meeting?.status === 'processing' ? (
-              <div className="rounded-lg border border-border bg-card p-12 text-center">
-                <Loader2 className="mx-auto h-10 w-10 animate-spin text-primary" />
+              <div className="rounded-2xl bg-card p-12 text-center shadow-card">
+                <Loader2 className="mx-auto h-10 w-10 animate-spin text-foreground" />
                 <p className="mt-4 text-muted-foreground">
                   A transcrição está sendo processada...
                 </p>
               </div>
             ) : (
-              <div className="rounded-lg border border-dashed border-border p-12 text-center">
-                <MessageSquare className="mx-auto h-10 w-10 text-muted-foreground/50" />
+              <div className="rounded-2xl bg-card p-12 text-center shadow-card">
+                <MessageSquare className="mx-auto h-10 w-10 text-muted-foreground/40" />
                 <p className="mt-4 text-muted-foreground">
                   Nenhuma transcrição disponível
                 </p>
@@ -383,16 +383,16 @@ export function MeetingDetailPage() {
                 value={newDecision}
                 onChange={(e) => setNewDecision(e.target.value)}
                 placeholder="Adicionar nova decisão..."
-                className="flex h-10 flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="flex h-11 flex-1 rounded-full border-0 bg-card px-5 py-2 text-sm shadow-card placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 onKeyDown={(e) => e.key === 'Enter' && handleCreateDecision()}
               />
               <button
                 onClick={handleCreateDecision}
                 disabled={!newDecision.trim() || createDecision.isPending}
-                className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+                className="inline-flex h-11 items-center gap-2 rounded-full bg-foreground px-5 text-sm font-medium text-background hover:bg-foreground/90 disabled:opacity-50 transition-colors"
               >
                 <Plus className="h-4 w-4" />
-                Adicionar
+                <span className="hidden sm:inline">Adicionar</span>
               </button>
             </div>
 
@@ -401,9 +401,11 @@ export function MeetingDetailPage() {
                 {decisions.map((decision) => (
                   <div
                     key={decision.id}
-                    className="flex items-start gap-3 rounded-lg border border-border bg-card p-4"
+                    className="flex items-start gap-3 rounded-2xl bg-card p-4 shadow-card"
                   >
-                    <Gavel className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-foreground/5">
+                      <Gavel className="h-4 w-4 text-foreground" />
+                    </div>
                     <div className="min-w-0 flex-1">
                       <p className="text-sm text-card-foreground">
                         {decision.content}
@@ -421,7 +423,7 @@ export function MeetingDetailPage() {
                     </div>
                     <button
                       onClick={() => handleDeleteDecision(decision.id)}
-                      className="rounded-md p-1 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                      className="rounded-full p-2 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
@@ -429,8 +431,8 @@ export function MeetingDetailPage() {
                 ))}
               </div>
             ) : (
-              <div className="rounded-lg border border-dashed border-border p-8 text-center">
-                <Gavel className="mx-auto h-8 w-8 text-muted-foreground/50" />
+              <div className="rounded-2xl bg-card p-8 text-center shadow-card">
+                <Gavel className="mx-auto h-8 w-8 text-muted-foreground/40" />
                 <p className="mt-3 text-sm text-muted-foreground">
                   Nenhuma decisão registrada
                 </p>
@@ -445,45 +447,41 @@ export function MeetingDetailPage() {
               meeting.action_items.map((item: { point: string; context?: string; outcome?: string; type?: string }, i: number) => {
                 const typeLabels: Record<string, { label: string; color: string }> = {
                   decision: { label: 'Decisão', color: 'bg-blue-500/10 text-blue-600' },
-                  action: { label: 'Ação', color: 'bg-green-500/10 text-green-600' },
-                  discussion: { label: 'Discussão', color: 'bg-yellow-500/10 text-yellow-600' },
+                  action: { label: 'Ação', color: 'bg-emerald-500/10 text-emerald-600' },
+                  discussion: { label: 'Discussão', color: 'bg-amber-500/10 text-amber-600' },
                   information: { label: 'Informação', color: 'bg-purple-500/10 text-purple-600' },
                 }
                 const typeInfo = typeLabels[item.type || 'discussion'] || typeLabels.discussion
                 return (
                   <div
                     key={i}
-                    className="rounded-lg border border-border bg-card p-4"
+                    className="rounded-2xl bg-card p-4 shadow-card"
                   >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${typeInfo.color}`}>
-                            {typeInfo.label}
-                          </span>
-                        </div>
-                        <p className="font-medium text-card-foreground">{item.point}</p>
-                        {item.context && (
-                          <p className="mt-1 text-sm text-muted-foreground">{item.context}</p>
-                        )}
-                        {item.outcome && (
-                          <p className="mt-2 text-sm">
-                            <span className="font-medium text-foreground">Resultado: </span>
-                            <span className="text-muted-foreground">{item.outcome}</span>
-                          </p>
-                        )}
-                      </div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${typeInfo.color}`}>
+                        {typeInfo.label}
+                      </span>
                     </div>
+                    <p className="font-medium text-card-foreground">{item.point}</p>
+                    {item.context && (
+                      <p className="mt-1 text-sm text-muted-foreground">{item.context}</p>
+                    )}
+                    {item.outcome && (
+                      <p className="mt-2 text-sm">
+                        <span className="font-medium text-foreground">Resultado: </span>
+                        <span className="text-muted-foreground">{item.outcome}</span>
+                      </p>
+                    )}
                   </div>
                 )
               })
             ) : typeof meeting.action_items === 'string' && meeting.action_items ? (
-              <div className="rounded-lg border border-border bg-card p-6">
+              <div className="rounded-2xl bg-card p-5 shadow-card sm:p-6">
                 <div className="mb-3 flex items-center justify-between">
                   <h3 className="font-semibold text-card-foreground">Itens de Ação</h3>
                   <button
                     onClick={() => copyToClipboard(meeting.action_items as string)}
-                    className="rounded-md p-1 text-muted-foreground hover:bg-accent"
+                    className="rounded-full p-2 text-muted-foreground hover:bg-accent transition-colors"
                   >
                     <Copy className="h-4 w-4" />
                   </button>
@@ -493,8 +491,8 @@ export function MeetingDetailPage() {
                 </div>
               </div>
             ) : (
-              <div className="rounded-lg border border-dashed border-border p-8 text-center">
-                <ListChecks className="mx-auto h-10 w-10 text-muted-foreground/50" />
+              <div className="rounded-2xl bg-card p-8 text-center shadow-card">
+                <ListChecks className="mx-auto h-10 w-10 text-muted-foreground/40" />
                 <p className="mt-4 text-muted-foreground">
                   Nenhum item de ação identificado
                 </p>
