@@ -9,13 +9,12 @@ import type {
   PaginatedResponse,
 } from '@/types/api'
 
-export function useFlashcards(materialId: string | undefined, page: number = 1) {
+export function useFlashcards(materialId: string | undefined) {
   return useQuery({
-    queryKey: ['flashcards', { materialId, page }],
+    queryKey: ['flashcards', { materialId }],
     queryFn: async () => {
-      const { data } = await api.get<PaginatedResponse<Flashcard>>(
-        `/knowledge/materials/${materialId}/flashcards`,
-        { params: { page } }
+      const { data } = await api.get<Flashcard[]>(
+        `/knowledge/flashcards/materials/${materialId}`
       )
       return data
     },
@@ -32,7 +31,7 @@ export function useDueFlashcards(scope?: { spaceId?: string; collectionId?: stri
       if (scope?.collectionId) params.collection_id = scope.collectionId
 
       const { data } = await api.get<FlashcardStudySession>(
-        '/knowledge/flashcards/due',
+        '/knowledge/flashcards/study',
         { params }
       )
       return data
@@ -56,15 +55,9 @@ export function useCreateFlashcard() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async ({
-      materialId,
-      payload,
-    }: {
-      materialId: string
-      payload: FlashcardCreate
-    }) => {
+    mutationFn: async ({ payload }: { materialId: string; payload: FlashcardCreate }) => {
       const { data } = await api.post<Flashcard>(
-        `/knowledge/materials/${materialId}/flashcards`,
+        '/knowledge/flashcards',
         payload
       )
       return data

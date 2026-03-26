@@ -164,7 +164,7 @@ export function MaterialDetailPage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <p className="text-sm text-muted-foreground">
-                {flashcardsData?.data.length ?? 0} flashcards
+                {flashcardsData.length ?? 0} flashcards
               </p>
               <button
                 onClick={handleGenerate}
@@ -180,7 +180,7 @@ export function MaterialDetailPage() {
               </button>
             </div>
 
-            {flashcardsData?.data.length === 0 ? (
+            {flashcardsData.length === 0 ? (
               <div className="rounded-2xl bg-card p-12 text-center shadow-card">
                 <Brain className="mx-auto h-10 w-10 text-muted-foreground/40" />
                 <p className="mt-4 text-sm text-muted-foreground">
@@ -189,7 +189,7 @@ export function MaterialDetailPage() {
               </div>
             ) : (
               <div className="space-y-3">
-                {flashcardsData?.data.map((card) => (
+                {flashcardsData.map((card) => (
                   <div key={card.id} className="rounded-2xl bg-card p-4 shadow-card">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0 flex-1">
