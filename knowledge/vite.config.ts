@@ -10,9 +10,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'icons/*.png'],
       manifest: {
-        name: 'Orbit',
-        short_name: 'Orbit',
-        description: 'Inteligência para suas reuniões',
+        name: 'Orbit Knowledge',
+        short_name: 'Knowledge',
+        description: 'Base de conhecimento inteligente',
         theme_color: '#3563E9',
         background_color: '#ffffff',
         display: 'standalone',
@@ -91,7 +91,7 @@ export default defineConfig({
     },
   },
   server: {
-    port: 3001,
+    port: 3002,
     proxy: {
       '/api': {
         target: 'https://orbitapi.atriumlogos.com',

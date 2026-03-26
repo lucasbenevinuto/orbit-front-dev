@@ -215,9 +215,9 @@ export function MeetingDetailPage() {
         </div>
       </div>
 
-      {/* Pill tabs */}
-      <div className="-mx-5 px-5 md:mx-0 md:px-0">
-        <div className="inline-flex gap-1 overflow-x-auto rounded-full bg-card p-1 shadow-card">
+      {/* Pill tabs — sticky on mobile */}
+      <div className="sticky top-0 z-10 -mx-5 bg-background px-5 py-3 md:static md:mx-0 md:bg-transparent md:px-0 md:py-0">
+        <div className="flex gap-1 overflow-x-auto rounded-full bg-card p-1 shadow-card">
           {tabs.map((tab) => (
             <button
               key={tab.id}
